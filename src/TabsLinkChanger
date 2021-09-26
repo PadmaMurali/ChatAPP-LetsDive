@@ -1,0 +1,49 @@
+package com.example.chatapp;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+
+public class TabsLinkChanger extends FragmentPagerAdapter {
+
+    public TabsLinkChanger(@NonNull FragmentManager fm) {
+        super(fm);
+    }
+
+    @Override
+    public Fragment getItem(int i) {
+        switch (i){
+            case 0:
+                ChatsFragment chats = new ChatsFragment();
+                return chats;
+
+            case 1:
+                UserFragment userfrag = new UserFragment();
+                return userfrag;
+
+            default:
+                return null;
+
+        }
+    }
+
+    @Override
+    public int getCount() {
+        return 2;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position){
+            case 0:
+                return "Chats";
+
+            case 1:
+                return "Users";
+
+            default:
+                return null;
+        }
+    }
+}
