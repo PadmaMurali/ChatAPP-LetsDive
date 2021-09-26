@@ -1,0 +1,78 @@
+package com.example.chatapp;
+
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
+public class ChatsFragment extends Fragment {
+
+        private RecyclerView recyclerView;
+        private DatabaseReference databaseReference;
+        private USerAdapter useradapter;
+        private ArrayList<Users> musers = new ArrayList<Users>();
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+
+            View view = inflater.inflate(R.layout.fragment_user, container,false);
+            recyclerView = view.findViewById(R.id.recycler_view);
+            databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
+            musers = new ArrayList<>();
+            useradapter = new USerAdapter(this, musers);
+
+            recyclerView.setAdapter(useradapter);
+
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    musers.clear();
+                    for(DataSnapshot dataSnapshot: snapshot.getChildren()){
+
+                        Users user = dataSnapshot.getValue(Users.class);
+
+                        for(String email : userlist)
+                        {
+                            if(user.getEmail().equals(email)){
+                                if(musers.size()!=0){
+                                    for(Users user1 : musers ){
+                                        musers.add(user1);
+                                    }
+                                }else{
+                                    musers.add(user);
+                                }
+                            }
+                        }
+                    }
+                    useradapter.notifyDataSetChanged();
+                    useradapter = new USerAdapter(getContext(),musers,true);
+                    recyclerView.setAdapter(useradapter);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        return view;
+    }
+}
